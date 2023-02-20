@@ -1,0 +1,7 @@
+.git/
+.gitignore
+*.exe
+docker-compose.yml
+build/
+sql/
+README.md

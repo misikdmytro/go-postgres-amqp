@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: build/app/Dockerfile
+    restart: always
+    environment:
+      - ENV=docker
+    depends_on:
+      - db
+      - rabbitmq3
+      - redis
+
+  db:
+    build:
+      context: .
+      dockerfile: build/postgres/Dockerfile
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:4.7.7
+    restart: always
+    ports:
+      - 8081:8080
+
+  rabbitmq3:
+    image: rabbitmq:3.11-management
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq3_data:/var/lib/rabbitmq
+
+  redis:
+    image: redis:5.0.5-alpine
+    restart: always
+    ports:
+      - 6379:6379
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - redisinsight_data:/data
+
+volumes:
+  db_data:
+  rabbitmq3_data:
+  redisinsight_data:
